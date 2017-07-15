@@ -22,9 +22,9 @@ my $nothisstocknumber;
 ################################
 
 #$stockNO = 2330;
-$stockNOstart = 2332;	$stockNOend = 2334;
-$yearstart = 2016;	$yearend = 2016;
-$monthstart = 10;	 $monthend = 12;
+$stockNOstart = 2330;	$stockNOend = 2330;
+$yearstart = 2006;	$yearend = 2016;
+$monthstart = 1;	 $monthend = 12;
 $daystart = 1;	$dayend = 31;
 $sleepinterval = 5;
 
@@ -53,6 +53,7 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 				$getdoc = get $url;
 				$getdoc =~ s/ //g;
 				if ($getdoc =~ /<div>/ ){ last whileloop_1; };
+				sleep($sleepinterval);
 			};
 
 			if ($getdoc =~ /<table>/ ){
