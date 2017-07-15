@@ -152,6 +152,12 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 		};
 	};
 	if ($stock_exist == 1) {	
+		
+		open (write_file,">>stock_number.txt") or die "open file error : $!";
+			seek (write_file,0,2);
+			print write_file ($stockNO_tmp,"\t");
+		close write_file;
+	
 		system "del test_0_$stockNO.txt";
 		system "del test_1_$stockNO.txt";
 		#system "rm -fr test_0_$stockNO.txt";
