@@ -22,9 +22,9 @@ my $nothisstocknumber;
 ################################
 
 #$stockNO = 2330;
-$stockNOstart = 2331;	$stockNOend = 2334;
+$stockNOstart = 2332;	$stockNOend = 2334;
 $yearstart = 2016;	$yearend = 2016;
-$monthstart = 9;	 $monthend = 10;
+$monthstart = 10;	 $monthend = 12;
 $daystart = 1;	$dayend = 31;
 $sleepinterval = 5;
 
@@ -48,10 +48,13 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 			$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
 				"?response=html&date= $yearmonth &stockNo= $stockNO";
 			$url =~ s/ //g;
-			
-			$getdoc = get $url;
-			$getdoc =~ s/ //g;
-			
+
+			whileloop_1: while (1){
+				$getdoc = get $url;
+				$getdoc =~ s/ //g;
+				if ($getdoc =~ /<div>/ ){ last whileloop_1; };
+			};
+
 			if ($getdoc =~ /<table>/ ){
 				print write_file ($getdoc);
 				$datestring = localtime();
