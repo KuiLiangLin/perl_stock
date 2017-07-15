@@ -1,0 +1,12 @@
+#!usr/bin/perl
+use warnings; use strict;
+use LWP::Simple;
+
+
+print "==>run history.pl"
+system "perl history.pl";
+
+print "==>run hash.pl"
+system "perl hash.pl";
+
+print "\n ~~~~ All works have been done! ~~~~ \n\n";

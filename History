@@ -1,0 +1,193 @@
+#!usr/bin/perl
+use warnings; use strict;
+use LWP::Simple;
+
+################################
+
+my $stockNO;
+my $yearmonth;
+my $url;
+my $getdoc;
+my $datestring;
+my $yearmonthday;
+my @input;
+my @input_1;
+my ($yearstart,$yearend);
+my ($monthstart, $monthend);
+my ($daystart, $dayend);
+my ($stockNOstart, $stockNOend);
+my $sleepinterval;
+my $nothisstocknumber;
+
+################################
+
+#$stockNO = 2330;
+$stockNOstart = 2331;	$stockNOend = 2334;
+$yearstart = 2016;	$yearend = 2016;
+$monthstart = 9;	 $monthend = 10;
+$daystart = 1;	$dayend = 31;
+$sleepinterval = 5;
+
+################################
+
+for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
+
+	################################write_file,">test_0
+	
+	open (write_file,">test_0_$stockNO.txt") or die "open file error : $!";
+	forloop_1: for (my $year = $yearstart; $year <= $yearend; $year++){
+		for (my $month = $monthstart; $month <= $monthend; $month++){
+			if ($month>=10){
+				$yearmonth = "$year $month 01";
+				$yearmonth =~ s/ //g;
+			}else{
+				$yearmonth = "$year 0 $month 01";
+				$yearmonth =~ s/ //g;
+			}
+			
+			$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
+				"?response=html&date= $yearmonth &stockNo= $stockNO";
+			$url =~ s/ //g;
+			
+			$getdoc = get $url;
+			$getdoc =~ s/ //g;
+			
+			if ($getdoc =~ /<table>/ ){
+				print write_file ($getdoc);
+				$datestring = localtime();
+				print  "$url\n";
+				print  "$yearmonth : fetch time $datestring\n";
+				$nothisstocknumber = 0;
+				sleep($sleepinterval);
+			}else{
+				$nothisstocknumber = 1;
+				last forloop_1;
+			};
+		};
+	};
+	close write_file;
+
+	################################open_file,"<test_0
+
+	open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
+		@input = <open_file>;
+	close open_file;
+
+	################################
+	
+	if ($nothisstocknumber == 1){	
+		print  "There is no ", $stockNO," table.\n";
+	};
+	if ($nothisstocknumber == 0){
+	
+		################################write_file,">test_1
+
+		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
+		#foreach (@input) { print "\n $_ ";}
+		for (my $i=0; $i<$#input+1; $i++) {
+			if ($input[$i] =~ /<td>/) {	print write_file ($input[$i], "\n");};
+		}
+		close write_file;
+
+		################################open_file,"<test_1
+
+		open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
+			@input_1 = <open_file>;
+		close open_file;
+
+		################################write_file,">test_2
+
+		open (write_file,">test_2_$stockNO.txt") or die "open file error : $!";
+		#foreach (@input) { print "\n $_ ";}
+		#header: for (my $i=0; $i<$#input+1; $i++){
+		#	if ($input[$i] =~ /$stockNO/){
+		#		if($input[$i] =~ /<thcolspan/){
+					print write_file ("NO=",$stockNO,"\t\t","成交股數\t\t","成交金額\t\t");	
+					print write_file ("開盤價  \t\t","最高價  \t\t","最低價  \t\t");	
+					print write_file ("收盤價  \t\t","漲跌價差\t\t","成交筆數\n");
+		#			last header;
+		#		}
+		#	}
+		#}	
+		for (my $year = ($yearstart-1911); $year <= ($yearend-1911); $year++){
+			for (my $month = $monthstart; $month <= $monthend; $month++){
+				for (my $day = $daystart; $day <= $dayend; $day++){
+					if ($month>=10){
+						$yearmonth = "$year/ $month";
+						$yearmonth =~ s/ //g;
+					}else{
+						$yearmonth = "$year/ 0 $month";
+						$yearmonth =~ s/ //g;
+					}
+					if ($day>=10){
+						$yearmonthday = "$yearmonth/ $day";
+						$yearmonthday =~ s/ //g;
+					}else{
+						$yearmonthday = "$yearmonth/ 0 $day";
+						$yearmonthday =~ s/ //g;
+					}
+					#print ($yearmonthday,"\n");
+					for (my $i=0; $i<$#input_1+1; $i++){
+						$input_1[$i]=~ s/<td>//g;
+						$input_1[$i]=~ s/<\/td>//g;
+						if ($input_1[$i] =~ $yearmonthday){	
+							for (my $j=0; $j<=16; $j+=2){
+								$input_1[$i+$j]=~ s/<td>//g;
+								$input_1[$i+$j]=~ s/<\/td>//g;	
+								$input_1[$i+$j]=~ s/\n//g;
+								if ($j == 0){
+									print write_file ($input_1[$i+$j],"\t\t");
+									print ($yearmonthday,"\t");
+								}else{
+									print write_file ($input_1[$i+$j],"\t\t");	
+								}
+								if ($j == 16){
+									print write_file ("\n");
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+		close write_file;
+	};
+	print ("\n");	
+};
+
+################################
+
+print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
+
+
+
+
+
+
+
+
+=header
+################## Start reading parameters ####################################
+open (open_file, "<mem_try_input_parameter.v") or die "open file error : $!";
+	@input = <open_file>;
+close open_file;
+foreach (@input) { print "\n $_ ";}
+for ($i=0; $i<$#input+1; $i++) {
+	@all = split(' ' , $input[$i]);
+	#for ($k=2; $k<$#all+1; $k+=3){print $all[$k], "\n";}
+	if ($all[0] =~ /WORD_WIDTH/) {$WORD_WIDTH = $all[2];};
+	if ($all[0] =~ /ADDRX_END/) {$ADDRX_END = $all[2];};
+	if ($all[0] =~ /ADDRY_END/) {$ADDRY_END = $all[2];};
+	if ($all[0] =~ /MEM_QUOTA/) {$MEM_QUOTA = $all[2];};
+	if ($all[0] =~ /Total_bank/) {$Total_bank = $all[2];};
+	if ($all[0] =~ /Sub_bank/) {$Sub_bank = $all[2];};
+	if ($all[0] =~ /Latch_wr_req_dly_cycle/) {$Latch_wr_req_dly_cycle = $all[2];};
+	if ($all[0] =~ /Latch_dp_req_dly_cycle/) {$Latch_dp_req_dly_cycle = $all[2];};
+}
+######################## End of reading parameters ####################################
+=cut
+
+=header
+system "gvim mem_try_output.v";
+print "\n ~~~~ All works have been done! ~~~~ \n\n";
+=cut
