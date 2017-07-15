@@ -5,6 +5,7 @@ use LWP::Simple;
 ################################
 
 my $stockNO;
+my $stockNO_tmp;
 my $yearmonth;
 my $url;
 #my $getdoc;
@@ -18,134 +19,151 @@ my ($daystart, $dayend);
 my ($stockNOstart, $stockNOend);
 my $sleepinterval;
 my $stock_exist;
+my $first_loop;
+my $year_east;
 
 ################################
 
 #$stockNO = 2330;
-$stockNOstart = 2331;	$stockNOend = 2334;
+$stockNOstart = 744;	$stockNOend = 2337;
 $yearstart = 2016;	$yearend = 2016;
-$monthstart = 11;	 $monthend = 12;
+$monthstart = 12;	 $monthend = 12;
 $daystart = 1;	$dayend = 31;
-$sleepinterval = 5;
+$sleepinterval = 3;
 
 ################################
 
 for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
-
-	################################write_file,">test_0
+	$first_loop = 1;
+	$stockNO_tmp = $stockNO;
 	
-
-forloop_1: for (my $year = $yearstart; $year <= $yearend; $year++){
-	for (my $month = $monthstart; $month <= $monthend; $month++){
-		
-		if ($month>=10){
-			$yearmonth = "$year $month 01";
-			$yearmonth =~ s/ //g;
-		}else{
-			$yearmonth = "$year 0 $month 01";
-			$yearmonth =~ s/ //g;
-		}
-		
-		$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
-			"?response=html&date= $yearmonth &stockNo= $stockNO";
-		$url =~ s/ //g;
-		
-		$stock_exist = get_url_data ($url, $sleepinterval, $yearmonth, $stockNO); #submodule
-		
-		if ($stock_exist == 0) {
-			print  "There is no ", $stockNO," table.\n";
-			last forloop_1; 
-		};
+	if ($stockNO>=1000){
+		$stockNO = $stockNO;
+	}elsif ($stockNO>=100){
+		$stockNO = "0 $stockNO";
+		$stockNO =~ s/ //g;
+	}elsif ($stockNO>=10){
+		$stockNO = "00 $stockNO";
+		$stockNO =~ s/ //g;
+	}else {
+		$stockNO = "000 $stockNO";
+		$stockNO =~ s/ //g;
 	};
-};
+		
+	forloop_1: for (my $year = $yearstart; $year <= $yearend; $year++){
+		for (my $month = $monthstart; $month <= $monthend; $month++){
+			
+			$year_east = $year - 1911;
+			if ($month>=10){
+				$yearmonth = "$year $month 01";
+				$yearmonth =~ s/ //g;
+			}else{
+				$yearmonth = "$year 0 $month 01";
+				$yearmonth =~ s/ //g;
+			}
+			
+			$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
+				"?response=html&date= $yearmonth &stockNo= $stockNO";
+			$url =~ s/ //g;
+			
+			$stock_exist = get_url_data ($url, $sleepinterval, $yearmonth, $stockNO); #submodule
+			
+			if ($stock_exist == 0) {
+				my $locatime = localtime();
+				print  "There is no ", $stockNO," table @", $locatime, "\n";
+				last forloop_1; 
+			};
 
-	if ($stock_exist == 1){
-	
-		################################open_file,"<test_0
+			if ($stock_exist == 1){
+			
+				################################ open_file,"<test_0
+				open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
+					@input = <open_file>;
+				close open_file;
+				
+				################################ write_file,">test_1
+				open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
+				#foreach (@input) { print "\n $_ ";}
+				for (my $i=0; $i<$#input+1; $i++) {
+					if ($input[$i] =~ /<td>/) {	print write_file ($input[$i], "\n");};
+				}
+				close write_file;
+				
+				################################ open_file,"<test_1
 
-		open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-			@input = <open_file>;
-		close open_file;
+				open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
+					@input_1 = <open_file>;
+				close open_file;
 
-		################################
-	
-		################################write_file,">test_1
+				################################ write_file,">skill
+				if ($first_loop == 1){
+					open (write_file,">skill_$stockNO.txt") or die "open file error : $!";
+						print write_file ("NO=",$stockNO,"\t\t","成交股數\t\t","成交金額\t\t");	
+						print write_file ("開盤價  \t\t","最高價  \t\t","最低價  \t\t");	
+						print write_file ("收盤價  \t\t","漲跌價差\t\t","成交筆數\n");
+					close write_file;
+				$first_loop = 0;
+				};
+				
+				################################ write_file,">skill
+				open (write_file,">>skill_$stockNO.txt") or die "open file error : $!";						
+					seek (write_file,0,2);
+					
+					for (my $day = $daystart; $day <= $dayend; $day++){
+						if ($month>=10){
+							$yearmonth = "$year_east/ $month";
+							$yearmonth =~ s/ //g;
+						}else{
+							$yearmonth = "$year_east/ 0 $month";
+							$yearmonth =~ s/ //g;
+						}
+						if ($day>=10){
+							$yearmonthday = "$yearmonth/ $day";
+							$yearmonthday =~ s/ //g;
+						}else{
+							$yearmonthday = "$yearmonth/ 0 $day";
+							$yearmonthday =~ s/ //g;
+						}
 
-		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
-		#foreach (@input) { print "\n $_ ";}
-		for (my $i=0; $i<$#input+1; $i++) {
-			if ($input[$i] =~ /<td>/) {	print write_file ($input[$i], "\n");};
-		}
-		close write_file;
-
-		################################open_file,"<test_1
-
-		open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
-			@input_1 = <open_file>;
-		close open_file;
-
-		################################write_file,">test_2
-
-		open (write_file,">test_2_$stockNO.txt") or die "open file error : $!";
-		#foreach (@input) { print "\n $_ ";}
-		#header: for (my $i=0; $i<$#input+1; $i++){
-		#	if ($input[$i] =~ /$stockNO/){
-		#		if($input[$i] =~ /<thcolspan/){
-					print write_file ("NO=",$stockNO,"\t\t","成交股數\t\t","成交金額\t\t");	
-					print write_file ("開盤價  \t\t","最高價  \t\t","最低價  \t\t");	
-					print write_file ("收盤價  \t\t","漲跌價差\t\t","成交筆數\n");
-		#			last header;
-		#		}
-		#	}
-		#}	
-		for (my $year = ($yearstart-1911); $year <= ($yearend-1911); $year++){
-			for (my $month = $monthstart; $month <= $monthend; $month++){
-				for (my $day = $daystart; $day <= $dayend; $day++){
-					if ($month>=10){
-						$yearmonth = "$year/ $month";
-						$yearmonth =~ s/ //g;
-					}else{
-						$yearmonth = "$year/ 0 $month";
-						$yearmonth =~ s/ //g;
-					}
-					if ($day>=10){
-						$yearmonthday = "$yearmonth/ $day";
-						$yearmonthday =~ s/ //g;
-					}else{
-						$yearmonthday = "$yearmonth/ 0 $day";
-						$yearmonthday =~ s/ //g;
-					}
-					#print ($yearmonthday,"\n");
-					for (my $i=0; $i<$#input_1+1; $i++){
-						$input_1[$i]=~ s/<td>//g;
-						$input_1[$i]=~ s/<\/td>//g;
-						if ($input_1[$i] =~ $yearmonthday){	
-							for (my $j=0; $j<=16; $j+=2){
-								$input_1[$i+$j]=~ s/<td>//g;
-								$input_1[$i+$j]=~ s/<\/td>//g;	
-								$input_1[$i+$j]=~ s/\n//g;
-								if ($j == 0){
-									print write_file ($input_1[$i+$j],"\t\t");
-									
-								}else{
-									print write_file ($input_1[$i+$j],"\t\t");	
-								}
-								if ($j == 16){
-									print write_file ("\n");
+						for (my $i=0; $i<$#input_1+1; $i++){
+							$input_1[$i]=~ s/<td>//g;
+							$input_1[$i]=~ s/<\/td>//g;
+							if ($input_1[$i] =~ $yearmonthday){	
+								for (my $j=0; $j<=16; $j+=2){
+									$input_1[$i+$j]=~ s/<td>//g;
+									$input_1[$i+$j]=~ s/<\/td>//g;	
+									$input_1[$i+$j]=~ s/\n//g;
+									if ($j == 0){
+										print write_file ($input_1[$i+$j],"\t\t");
+										
+									}else{
+										print write_file ($input_1[$i+$j],"\t\t");	
+									}
+									if ($j == 16){
+										print write_file ("\n");
+									};
 								};
 							};
 						};
 					};
-				};
-			print ($yearmonth,"\t");
+				close write_file;
 			};
+			print ("\n");			
 		};
-		close write_file;
 	};
-	print ("\n");	
+	if ($stock_exist == 1) {	
+		system "del test_0_$stockNO.txt";
+		system "del test_1_$stockNO.txt";
+		#system "rm -fr test_0_$stockNO.txt";
+		#system "rm -fr test_1_$stockNO.txt";		
+		
+	};
+	$stockNO = $stockNO_tmp;
 };
 
 ################################
+
+
 
 print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
 
@@ -182,18 +200,27 @@ system "gvim mem_try_output.v";
 print "\n ~~~~ All works have been done! ~~~~ \n\n";
 =cut
 
+=header
+open (write_file,">>test_0_$stockNO_in.txt") or die "open file error : $!";
+	seek (write_file,0,2);
+	print write_file ($getdoc);
+close write_file;
+=cut
+
 sub get_url_data {
 	my ($url_in, $sleepinterval_in, $yearmonth_in, $stockNO_in) = @_;
-	my ($stock_exist_out,);
+	my ($stock_exist_out);
 	my ($getdoc, $datestring);
-
+	
+	################################ wait until get data
 	whileloop_1: while (1){
 		$getdoc = get $url_in;
 		$getdoc =~ s/ //g;
-		if ($getdoc =~ /<div>/ ){ last whileloop_1; };
 		sleep($sleepinterval_in);
+		if ($getdoc =~ /<div>/ ){ last whileloop_1; };
 	};
 
+	################################ write data to test_0
 	if ($getdoc =~ /<table>/ ){
 		
 		open (write_file,">test_0_$stockNO_in.txt") or die "open file error : $!";
@@ -204,10 +231,9 @@ sub get_url_data {
 		print  "$url\n";
 		print  "$yearmonth_in : fetch time $datestring\n";
 		$stock_exist_out = 1;
-		sleep($sleepinterval_in);
 	}else{
 		$stock_exist_out = 0;
-		#last forloop_1;
 	};
 	return $stock_exist_out;
 };
+
