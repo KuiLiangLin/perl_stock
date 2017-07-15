@@ -141,7 +141,7 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 								$input_1[$i+$j]=~ s/\n//g;
 								if ($j == 0){
 									print write_file ($input_1[$i+$j],"\t\t");
-									print ($yearmonthday,"\t");
+									
 								}else{
 									print write_file ($input_1[$i+$j],"\t\t");	
 								}
@@ -152,6 +152,7 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 						};
 					};
 				};
+			print ($yearmonth,"\t");
 			};
 		};
 		close write_file;
