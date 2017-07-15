@@ -7,8 +7,8 @@ use LWP::Simple;
 my $stockNO;
 my $yearmonth;
 my $url;
-my $getdoc;
-my $datestring;
+#my $getdoc;
+#my $datestring;
 my $yearmonthday;
 my @input;
 my @input_1;
@@ -17,14 +17,14 @@ my ($monthstart, $monthend);
 my ($daystart, $dayend);
 my ($stockNOstart, $stockNOend);
 my $sleepinterval;
-my $nothisstocknumber;
+my $stock_exist;
 
 ################################
 
 #$stockNO = 2330;
-$stockNOstart = 2330;	$stockNOend = 2330;
-$yearstart = 2006;	$yearend = 2016;
-$monthstart = 1;	 $monthend = 12;
+$stockNOstart = 2331;	$stockNOend = 2334;
+$yearstart = 2016;	$yearend = 2016;
+$monthstart = 11;	 $monthend = 12;
 $daystart = 1;	$dayend = 31;
 $sleepinterval = 5;
 
@@ -34,55 +34,40 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 
 	################################write_file,">test_0
 	
-	open (write_file,">test_0_$stockNO.txt") or die "open file error : $!";
-	forloop_1: for (my $year = $yearstart; $year <= $yearend; $year++){
-		for (my $month = $monthstart; $month <= $monthend; $month++){
-			if ($month>=10){
-				$yearmonth = "$year $month 01";
-				$yearmonth =~ s/ //g;
-			}else{
-				$yearmonth = "$year 0 $month 01";
-				$yearmonth =~ s/ //g;
-			}
-			
-			$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
-				"?response=html&date= $yearmonth &stockNo= $stockNO";
-			$url =~ s/ //g;
 
-			whileloop_1: while (1){
-				$getdoc = get $url;
-				$getdoc =~ s/ //g;
-				if ($getdoc =~ /<div>/ ){ last whileloop_1; };
-				sleep($sleepinterval);
-			};
-
-			if ($getdoc =~ /<table>/ ){
-				print write_file ($getdoc);
-				$datestring = localtime();
-				print  "$url\n";
-				print  "$yearmonth : fetch time $datestring\n";
-				$nothisstocknumber = 0;
-				sleep($sleepinterval);
-			}else{
-				$nothisstocknumber = 1;
-				last forloop_1;
-			};
+forloop_1: for (my $year = $yearstart; $year <= $yearend; $year++){
+	for (my $month = $monthstart; $month <= $monthend; $month++){
+		
+		if ($month>=10){
+			$yearmonth = "$year $month 01";
+			$yearmonth =~ s/ //g;
+		}else{
+			$yearmonth = "$year 0 $month 01";
+			$yearmonth =~ s/ //g;
+		}
+		
+		$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
+			"?response=html&date= $yearmonth &stockNo= $stockNO";
+		$url =~ s/ //g;
+		
+		$stock_exist = get_url_data ($url, $sleepinterval, $yearmonth, $stockNO); #submodule
+		
+		if ($stock_exist == 0) {
+			print  "There is no ", $stockNO," table.\n";
+			last forloop_1; 
 		};
 	};
-	close write_file;
+};
 
-	################################open_file,"<test_0
-
-	open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-		@input = <open_file>;
-	close open_file;
-
-	################################
+	if ($stock_exist == 1){
 	
-	if ($nothisstocknumber == 1){	
-		print  "There is no ", $stockNO," table.\n";
-	};
-	if ($nothisstocknumber == 0){
+		################################open_file,"<test_0
+
+		open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
+			@input = <open_file>;
+		close open_file;
+
+		################################
 	
 		################################write_file,">test_1
 
@@ -196,3 +181,33 @@ for ($i=0; $i<$#input+1; $i++) {
 system "gvim mem_try_output.v";
 print "\n ~~~~ All works have been done! ~~~~ \n\n";
 =cut
+
+sub get_url_data {
+	my ($url_in, $sleepinterval_in, $yearmonth_in, $stockNO_in) = @_;
+	my ($stock_exist_out,);
+	my ($getdoc, $datestring);
+
+	whileloop_1: while (1){
+		$getdoc = get $url_in;
+		$getdoc =~ s/ //g;
+		if ($getdoc =~ /<div>/ ){ last whileloop_1; };
+		sleep($sleepinterval_in);
+	};
+
+	if ($getdoc =~ /<table>/ ){
+		
+		open (write_file,">test_0_$stockNO_in.txt") or die "open file error : $!";
+			print write_file ($getdoc);
+		close write_file;
+		
+		$datestring = localtime();
+		print  "$url\n";
+		print  "$yearmonth_in : fetch time $datestring\n";
+		$stock_exist_out = 1;
+		sleep($sleepinterval_in);
+	}else{
+		$stock_exist_out = 0;
+		#last forloop_1;
+	};
+	return $stock_exist_out;
+};
