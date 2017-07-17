@@ -1,4 +1,5 @@
 =header
+
  Code  Issues 0  Pull requests 0  Projects 0  Wiki  Settings Insights 
 Branch: master Find file Copy pathperl_stock/History
 a9bca05  2 days ago
@@ -8,6 +9,14 @@ RawBlameHistory
 246 lines (200 sloc)  6.46 KB
 Contact GitHub API Training Shop Blog About
 © 2017 GitHub, Inc. Terms Privacy Security Status Help
+
+#1.$stockNO
+#2.$year
+#3.$month
+#4.day
+#5.$sleepinterval
+#6.$first_loop
+
 =cut
 
 #!usr/bin/perl
@@ -45,7 +54,7 @@ my $haveit;
 #$stockNOstart = 744;	$stockNOend = 2337;
 $stockNOstart = 2337;	$stockNOend = 2337;
 $yearstart = 2016;	$yearend = 2016;
-$monthstart = 11;	 $monthend = 12;
+$monthstart = 12;	 $monthend = 12;
 $daystart = 1;	$dayend = 31;
 $sleepinterval = 1;
 $first_loop = 0;
@@ -180,8 +189,9 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 								$haveit = 1; };
 							};
 						};
-						print $haveit;
+
 						if ($haveit == 0){
+							print "Update\t";
 							open (write_file,">>skill_$stockNO.txt") or die "open file error : $!";						
 								seek (write_file,0,2);
 								print write_file ($input_2[$i]);
@@ -189,12 +199,9 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 						};
 						$haveit = 0;
 					};
-		
 				};
-				
 			};
 			print ("\n");
-			
 		};
 	};
 	if ($stock_exist == 1) {	
@@ -227,10 +234,6 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 		close write_file;
 		$first_loop = 0;
 	};
-	
-	
-	
-	
 };
 
 ################################
