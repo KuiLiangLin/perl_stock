@@ -1,3 +1,15 @@
+=header
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Settings Insights 
+Branch: master Find file Copy pathperl_stock/History
+a9bca05  2 days ago
+@b9907020 b9907020 Update History
+1 contributor
+RawBlameHistory     
+246 lines (200 sloc)  6.46 KB
+Contact GitHub API Training Shop Blog About
+© 2017 GitHub, Inc. Terms Privacy Security Status Help
+=cut
+
 #!usr/bin/perl
 use warnings; use strict;
 use LWP::Simple;
@@ -11,8 +23,13 @@ my $url;
 #my $getdoc;
 #my $datestring;
 my $yearmonthday;
-my @input;
+my @input_0;
 my @input_1;
+my @input_2;
+my @input_3;
+my @all;
+my @all_2;
+my @all_3;
 my ($yearstart,$yearend);
 my ($monthstart, $monthend);
 my ($daystart, $dayend);
@@ -21,20 +38,21 @@ my $sleepinterval;
 my $stock_exist;
 my $first_loop;
 my $year_east;
-
+my $haveit;
 ################################
 
 #$stockNO = 2330;
-$stockNOstart = 744;	$stockNOend = 2337;
+#$stockNOstart = 744;	$stockNOend = 2337;
+$stockNOstart = 2337;	$stockNOend = 2337;
 $yearstart = 2016;	$yearend = 2016;
-$monthstart = 12;	 $monthend = 12;
+$monthstart = 11;	 $monthend = 12;
 $daystart = 1;	$dayend = 31;
-$sleepinterval = 3;
-
+$sleepinterval = 1;
+$first_loop = 0;
 ################################
 
 for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
-	$first_loop = 1;
+	$first_loop = 0;
 	$stockNO_tmp = $stockNO;
 	
 	if ($stockNO>=1000){
@@ -78,14 +96,14 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 			
 				################################ open_file,"<test_0
 				open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-					@input = <open_file>;
+					@input_0 = <open_file>;
 				close open_file;
 				
 				################################ write_file,">test_1
 				open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
 				#foreach (@input) { print "\n $_ ";}
-				for (my $i=0; $i<$#input+1; $i++) {
-					if ($input[$i] =~ /<td>/) {	print write_file ($input[$i], "\n");};
+				for (my $i=0; $i<$#input_0+1; $i++) {
+					if ($input_0[$i] =~ /<td>/) {	print write_file ($input_0[$i], "\n");};
 				}
 				close write_file;
 				
@@ -96,17 +114,7 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 				close open_file;
 
 				################################ write_file,">skill
-				if ($first_loop == 1){
-					open (write_file,">skill_$stockNO.txt") or die "open file error : $!";
-						print write_file ("NO=",$stockNO,"\t\t","成交股數\t\t","成交金額\t\t");	
-						print write_file ("開盤價  \t\t","最高價  \t\t","最低價  \t\t");	
-						print write_file ("收盤價  \t\t","漲跌價差\t\t","成交筆數\n");
-					close write_file;
-				$first_loop = 0;
-				};
-				
-				################################ write_file,">skill
-				open (write_file,">>skill_$stockNO.txt") or die "open file error : $!";						
+				open (write_file,">>skill_tmp_$stockNO.txt") or die "open file error : $!";						
 					seek (write_file,0,2);
 					
 					for (my $day = $daystart; $day <= $dayend; $day++){
@@ -133,12 +141,9 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 									$input_1[$i+$j]=~ s/<td>//g;
 									$input_1[$i+$j]=~ s/<\/td>//g;	
 									$input_1[$i+$j]=~ s/\n//g;
-									if ($j == 0){
-										print write_file ($input_1[$i+$j],"\t\t");
-										
-									}else{
-										print write_file ($input_1[$i+$j],"\t\t");	
-									}
+									
+									print write_file ($input_1[$i+$j],"\t\t");	
+								
 									if ($j == 16){
 										print write_file ("\n");
 									};
@@ -147,8 +152,49 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 						};
 					};
 				close write_file;
+				
+				################################ do_cmp_test_1_with_skill
+				open (open_file,"<skill_tmp_$stockNO.txt") or die "open file error : $!";
+					@input_2 = <open_file>;
+				close open_file;		
+				
+				if ($first_loop == 1){					
+					open (write_file,">skill_$stockNO.txt") or die "open file error : $!";					
+						foreach (@input_2) { print write_file"$_"; };
+					close write_file;
+					
+				}else{			
+					open (open_file,"<skill_$stockNO.txt") or die "open file error : $!";
+						@input_3 = <open_file>;
+					close open_file;				
+					
+					for (my $i=0; $i<$#input_2+1; $i++){
+						for (my $j=0; $j<$#input_3+1; $j++){
+							@all_2 = split('\t\t' , $input_2[$i]);
+							@all_3 = split('\t\t' , $input_3[$j]);
+							$all_2[0] =~ s/\///g;
+							$all_3[0] =~ s/\///g;
+							#print $all_3[0];
+							if ($first_loop == 0 && $j != 0){
+								if($all_2[0] == $all_3[0]) {
+								$haveit = 1; };
+							};
+						};
+						print $haveit;
+						if ($haveit == 0){
+							open (write_file,">>skill_$stockNO.txt") or die "open file error : $!";						
+								seek (write_file,0,2);
+								print write_file ($input_2[$i]);
+							close write_file;
+						};
+						$haveit = 0;
+					};
+		
+				};
+				
 			};
-			print ("\n");			
+			print ("\n");
+			
 		};
 	};
 	if ($stock_exist == 1) {	
@@ -160,11 +206,31 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 	
 		system "del test_0_$stockNO.txt";
 		system "del test_1_$stockNO.txt";
+		system "del skill_tmp_$stockNO.txt";
 		#system "rm -fr test_0_$stockNO.txt";
 		#system "rm -fr test_1_$stockNO.txt";		
 		
 	};
-	$stockNO = $stockNO_tmp;
+	$stockNO = $stockNO_tmp;	
+
+	################################ write_file,">skill
+	if ($first_loop == 1){
+		open (open_file,"<skill_$stockNO.txt") or die "open file error : $!";
+			@input_2 = <open_file>;
+		close open_file;		
+		
+		open (write_file,">skill_$stockNO.txt") or die "open file error : $!";
+			print write_file ("NO=",$stockNO,"\t\t","成交股數\t\t","成交金額\t\t");	
+			print write_file ("開盤價  \t\t","最高價  \t\t","最低價  \t\t");	
+			print write_file ("收盤價  \t\t","漲跌價差\t\t","成交筆數\n");
+			foreach (@input_2){print write_file "$_"; };
+		close write_file;
+		$first_loop = 0;
+	};
+	
+	
+	
+	
 };
 
 ################################
@@ -242,4 +308,3 @@ sub get_url_data {
 	};
 	return $stock_exist_out;
 };
-
