@@ -18,6 +18,7 @@ my @input_3;
 my @all;
 my @all_2;
 my @all_3;
+my @stockNum;
 my ($yearstart,$yearend);
 my ($monthstart, $monthend);
 my ($daystart, $dayend);
@@ -31,174 +32,161 @@ my $haveit;
 
 #$stockNO = 2330;
 #$stockNOstart = 744;	$stockNOend = 2337;
-$stockNOstart = 2337;	$stockNOend = 2337;
-$yearstart = 2016;	$yearend = 2016;
-$monthstart = 12;	 $monthend = 12;
+$stockNOstart = 0000;	$stockNOend = 9999;
+$yearstart = 2006;	$yearend = 2006;
+$monthstart = 1;	 $monthend = 1;
 $daystart = 1;	$dayend = 31;
 $sleepinterval = 1;
-$first_loop = 0;
+$first_loop = 1;
+
+################################ open_file,"<test_0
+open (open_file,"<stock_number.txt") or die "open file error : $!";
+	@stockNum = <open_file>;
+close open_file;
+
+for (my $i=0; $i<$#stockNum+1; $i++) {
+
+}
 ################################
-
-for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
-	$first_loop = 0;
-	$stockNO_tmp = $stockNO;
 	
-	if ($stockNO>=1000){
-		$stockNO = $stockNO;
-	}elsif ($stockNO>=100){
-		$stockNO = "0 $stockNO";
-		$stockNO =~ s/ //g;
-	}elsif ($stockNO>=10){
-		$stockNO = "00 $stockNO";
-		$stockNO =~ s/ //g;
-	}else {
-		$stockNO = "000 $stockNO";
-		$stockNO =~ s/ //g;
-	};
+forloop_1: for (my $year = $yearstart; $year <= $yearend; $year++){
+	for (my $month = $monthstart; $month <= $monthend; $month++){
 		
-	forloop_1: for (my $year = $yearstart; $year <= $yearend; $year++){
-		for (my $month = $monthstart; $month <= $monthend; $month++){
+		$year_east = $year - 1911;
+		if ($month>=10){
+			$yearmonth = "$year $month 01";
+			$yearmonth =~ s/ //g;
+		}else{
+			$yearmonth = "$year 0 $month 01";
+			$yearmonth =~ s/ //g;
+		}
+		
+		$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
+			"?response=html&date= $yearmonth &stockNo= $stockNO";
+		$url =~ s/ //g;
+		
+		$stock_exist = get_url_data ($url, $sleepinterval, $yearmonth, $stockNO); #submodule
+		
+		if ($stock_exist == 0) {
+			my $locatime = localtime();
+			print  "There is no ", $stockNO," table @", $locatime, "\n"; 
+		};
+
+		if ($stock_exist == 1){
+		
+			################################ open_file,"<test_0
+			open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
+				@input_0 = <open_file>;
+			close open_file;
 			
-			$year_east = $year - 1911;
-			if ($month>=10){
-				$yearmonth = "$year $month 01";
-				$yearmonth =~ s/ //g;
-			}else{
-				$yearmonth = "$year 0 $month 01";
-				$yearmonth =~ s/ //g;
+			################################ write_file,">test_1
+			open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
+			#foreach (@input) { print "\n $_ ";}
+			for (my $i=0; $i<$#input_0+1; $i++) {
+				if ($input_0[$i] =~ /<td>/) {	print write_file ($input_0[$i], "\n");};
 			}
+			close write_file;
 			
-			$url = "http://www.tse.com.tw/exchangeReport/STOCK_DAY".
-				"?response=html&date= $yearmonth &stockNo= $stockNO";
-			$url =~ s/ //g;
-			
-			$stock_exist = get_url_data ($url, $sleepinterval, $yearmonth, $stockNO); #submodule
-			
-			if ($stock_exist == 0) {
-				my $locatime = localtime();
-				print  "There is no ", $stockNO," table @", $locatime, "\n";
-				last forloop_1; 
-			};
+			################################ open_file,"<test_1
 
-			if ($stock_exist == 1){
-			
-				################################ open_file,"<test_0
-				open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-					@input_0 = <open_file>;
-				close open_file;
+			open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
+				@input_1 = <open_file>;
+			close open_file;
+
+			################################ write_file,">skill
+			open (write_file,">>skill_tmp_$stockNO.txt") or die "open file error : $!";						
+				seek (write_file,0,2);
 				
-				################################ write_file,">test_1
-				open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
-				#foreach (@input) { print "\n $_ ";}
-				for (my $i=0; $i<$#input_0+1; $i++) {
-					if ($input_0[$i] =~ /<td>/) {	print write_file ($input_0[$i], "\n");};
-				}
-				close write_file;
-				
-				################################ open_file,"<test_1
+				for (my $day = $daystart; $day <= $dayend; $day++){
+					if ($month>=10){
+						$yearmonth = "$year_east/ $month";
+						$yearmonth =~ s/ //g;
+					}else{
+						$yearmonth = "$year_east/ 0 $month";
+						$yearmonth =~ s/ //g;
+					}
+					if ($day>=10){
+						$yearmonthday = "$yearmonth/ $day";
+						$yearmonthday =~ s/ //g;
+					}else{
+						$yearmonthday = "$yearmonth/ 0 $day";
+						$yearmonthday =~ s/ //g;
+					}
 
-				open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
-					@input_1 = <open_file>;
-				close open_file;
-
-				################################ write_file,">skill
-				open (write_file,">>skill_tmp_$stockNO.txt") or die "open file error : $!";						
-					seek (write_file,0,2);
-					
-					for (my $day = $daystart; $day <= $dayend; $day++){
-						if ($month>=10){
-							$yearmonth = "$year_east/ $month";
-							$yearmonth =~ s/ //g;
-						}else{
-							$yearmonth = "$year_east/ 0 $month";
-							$yearmonth =~ s/ //g;
-						}
-						if ($day>=10){
-							$yearmonthday = "$yearmonth/ $day";
-							$yearmonthday =~ s/ //g;
-						}else{
-							$yearmonthday = "$yearmonth/ 0 $day";
-							$yearmonthday =~ s/ //g;
-						}
-
-						for (my $i=0; $i<$#input_1+1; $i++){
-							$input_1[$i]=~ s/<td>//g;
-							$input_1[$i]=~ s/<\/td>//g;
-							if ($input_1[$i] =~ $yearmonthday){	
-								for (my $j=0; $j<=16; $j+=2){
-									$input_1[$i+$j]=~ s/<td>//g;
-									$input_1[$i+$j]=~ s/<\/td>//g;	
-									$input_1[$i+$j]=~ s/\n//g;
-									
-									print write_file ($input_1[$i+$j],"\t\t");	
+					for (my $i=0; $i<$#input_1+1; $i++){
+						$input_1[$i]=~ s/<td>//g;
+						$input_1[$i]=~ s/<\/td>//g;
+						if ($input_1[$i] =~ $yearmonthday){	
+							for (my $j=0; $j<=16; $j+=2){
+								$input_1[$i+$j]=~ s/<td>//g;
+								$input_1[$i+$j]=~ s/<\/td>//g;	
+								$input_1[$i+$j]=~ s/\n//g;
 								
-									if ($j == 16){
-										print write_file ("\n");
-									};
+								print write_file ($input_1[$i+$j],"\t\t");	
+							
+								if ($j == 16){
+									print write_file ("\n");
 								};
 							};
 						};
 					};
-				close write_file;
-				
-				################################ do_cmp_test_1_with_skill
-				open (open_file,"<skill_tmp_$stockNO.txt") or die "open file error : $!";
-					@input_2 = <open_file>;
-				close open_file;		
-				
-				if ($first_loop == 1){					
-					open (write_file,">skill_$stockNO.txt") or die "open file error : $!";					
-						foreach (@input_2) { print write_file"$_"; };
-					close write_file;
-					
-				}else{			
-					open (open_file,"<skill_$stockNO.txt") or die "open file error : $!";
-						@input_3 = <open_file>;
-					close open_file;				
-					
-					for (my $i=0; $i<$#input_2+1; $i++){
-						for (my $j=0; $j<$#input_3+1; $j++){
-							@all_2 = split('\t\t' , $input_2[$i]);
-							@all_3 = split('\t\t' , $input_3[$j]);
-							$all_2[0] =~ s/\///g;
-							$all_3[0] =~ s/\///g;
-							#print $all_3[0];
-							if ($first_loop == 0 && $j != 0){
-								if($all_2[0] == $all_3[0]) {
-								$haveit = 1; };
-							};
-						};
-
-						if ($haveit == 0){
-							print "Update\t";
-							open (write_file,">>skill_$stockNO.txt") or die "open file error : $!";						
-								seek (write_file,0,2);
-								print write_file ($input_2[$i]);
-							close write_file;
-						};
-						$haveit = 0;
-					};
 				};
-			};
-			print ("\n");
-		};
-	};
-	if ($stock_exist == 1) {	
-		
-		open (write_file,">>stock_number.txt") or die "open file error : $!";
-			seek (write_file,0,2);
-			print write_file ($stockNO_tmp,"\t");
-		close write_file;
-	
-		system "del test_0_$stockNO.txt";
-		system "del test_1_$stockNO.txt";
-		system "del skill_tmp_$stockNO.txt";
-		#system "rm -fr test_0_$stockNO.txt";
-		#system "rm -fr test_1_$stockNO.txt";		
-		
-	};
-	$stockNO = $stockNO_tmp;	
+			close write_file;
+			
+			################################ do_cmp_test_1_with_skill
+			open (open_file,"<skill_tmp_$stockNO.txt") or die "open file error : $!";
+				@input_2 = <open_file>;
+			close open_file;		
+			
+			if (-e "skill_$stockNO.txt"){					
+				open (open_file,"<skill_$stockNO.txt") or die "open file error : $!";
+					@input_3 = <open_file>;
+				close open_file;				
+				
+				for (my $i=0; $i<$#input_2+1; $i++){
+					for (my $j=0; $j<$#input_3+1; $j++){
+						@all_2 = split('\t\t' , $input_2[$i]);
+						@all_3 = split('\t\t' , $input_3[$j]);
+						$all_2[0] =~ s/\///g;
+						$all_3[0] =~ s/\///g;
+						#print $all_3[0];
+						if ($first_loop == 0 && $j != 0){
+							if($all_2[0] == $all_3[0]) {
+							$haveit = 1; };
+						};
+					};
 
+					if ($haveit == 0){
+						print "Update\t";
+						open (write_file,">>skill_$stockNO.txt") or die "open file error : $!";						
+							seek (write_file,0,2);
+							print write_file ($input_2[$i]);
+						close write_file;
+					};
+					$haveit = 0;
+				};
+				
+			}else{	
+				open (write_file,">skill_$stockNO.txt") or die "open file error : $!";					
+					foreach (@input_2) { print write_file"$_"; };
+				close write_file;					
+			};
+		};
+		print ("\n");
+	};
+};	
+	system "del test_0_$stockNO.txt";
+	system "del test_1_$stockNO.txt";
+	system "del skill_tmp_$stockNO.txt";
+	#system "rm -fr test_0_$stockNO.txt";
+	#system "rm -fr test_1_$stockNO.txt";		
+
+};	
+
+################################
+print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
+
+=header	
 	################################ write_file,">skill
 	if ($first_loop == 1){
 		open (open_file,"<skill_$stockNO.txt") or die "open file error : $!";
@@ -213,15 +201,7 @@ for ($stockNO = $stockNOstart; $stockNO <= $stockNOend; $stockNO++){
 		close write_file;
 		$first_loop = 0;
 	};
-};
-
-################################
-
-
-
-print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
-
-
+=cut	
 
 
 
@@ -292,22 +272,19 @@ sub get_url_data {
 };
 
 =header
-
  Code  Issues 0  Pull requests 0  Projects 0  Wiki  Settings Insights 
 Branch: master Find file Copy pathperl_stock/History
-a9bca05  2 days ago
+ee6f7aa  a day ago
 @b9907020 b9907020 Update History
 1 contributor
 RawBlameHistory     
-246 lines (200 sloc)  6.46 KB
+314 lines (260 sloc)  8.28 KB
 Contact GitHub API Training Shop Blog About
 © 2017 GitHub, Inc. Terms Privacy Security Status Help
-
 #1.$stockNO
 #2.$year
 #3.$month
 #4.day
 #5.$sleepinterval
 #6.$first_loop
-
 =cut
