@@ -166,7 +166,7 @@ sub Get_Dividend{
 		close open_file;	
 		
 		################################ write_file,">basic
-		open (write_file,">dividend_tmp_$stockNO.txt") or die "open file error : $!";			
+		open (write_file,">$stockNO\_dividend.txt") or die "open file error : $!";			
 			for (my $i=0; $i<$#input_1-2; $i+=3) {
 				$input_1[$i] =~ s/\n//g;
 				$input_1[$i+1] =~ s/\n//g;
@@ -229,7 +229,7 @@ sub Get_Financial{
 		close open_file;	
 		
 		################################ write_file,">basic
-		open (write_file,">finicial_tmp_$stockNO.txt") or die "open file error : $!";			
+		open (write_file,">$stockNO\_finicial.txt") or die "open file error : $!";			
 			for (my $i=0; $i<$#input_1-12; $i+=12) {
 				for (my $a = 0; $a <= 11; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
@@ -292,7 +292,7 @@ sub Get_Balance{
 		close open_file;	
 		
 		################################ write_file,">basic
-		open (write_file,">balance_tmp_$stockNO.txt") or die "open file error : $!";			
+		open (write_file,">$stockNO\_balance.txt") or die "open file error : $!";			
 			for (my $i=0; $i<$#input_1-7; $i+=7) {
 				for (my $a = 0; $a <= 6; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
@@ -355,7 +355,7 @@ sub Get_Income{
 		close open_file;	
 		
 		################################ write_file,">basic
-		open (write_file,">income_tmp_$stockNO.txt") or die "open file error : $!";			
+		open (write_file,">$stockNO\_income.txt") or die "open file error : $!";			
 			for (my $i=0; $i<$#input_1-7; $i+=7) {
 				for (my $a = 0; $a <= 6; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
