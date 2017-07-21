@@ -126,13 +126,10 @@ close write_file;
 ################################ sub Get_Dividend
 sub Get_Dividend{
 
-	$stock_exist = get_url_data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
+	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 	if ($stock_exist == 1){	
 	
-		################################ open_file,"<test_0
-		open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-			@input_0 = <open_file>;
-		close open_file;	
+		Read_File_Test_0 ();	
 
 		################################ write_file,">test_1
 		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
@@ -160,10 +157,7 @@ sub Get_Dividend{
 		$yes = 0;
 		close write_file;	
 
-		################################ open_file,"<test_1
-		open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
-			@input_1 = <open_file>;
-		close open_file;	
+		Read_File_Test_1 ();	
 		
 		################################ write_file,">basic
 		open (write_file,">$stockNO\_dividend.txt") or die "open file error : $!";			
@@ -190,13 +184,10 @@ sub Get_Dividend{
 ################################ sub Get_Financial
 sub Get_Financial{
 
-	$stock_exist = get_url_data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
+	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 	if ($stock_exist == 1){	
 	
-		################################ open_file,"<test_0
-		open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-			@input_0 = <open_file>;
-		close open_file;	
+		Read_File_Test_0 ();	
 
 		################################ write_file,">test_1
 		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
@@ -223,10 +214,7 @@ sub Get_Financial{
 		$yes = 0;
 		close write_file;	
 
-		################################ open_file,"<test_1
-		open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
-			@input_1 = <open_file>;
-		close open_file;	
+		Read_File_Test_1 ();	
 		
 		################################ write_file,">basic
 		open (write_file,">$stockNO\_finicial.txt") or die "open file error : $!";			
@@ -249,13 +237,10 @@ sub Get_Financial{
 ################################ sub Get_Balance
 sub Get_Balance{
 
-	$stock_exist = get_url_data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
+	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 	if ($stock_exist == 1){	
 	
-		################################ open_file,"<test_0
-		open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-			@input_0 = <open_file>;
-		close open_file;	
+		Read_File_Test_0 ();
 
 		################################ write_file,">test_1
 		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
@@ -286,10 +271,7 @@ sub Get_Balance{
 		$yes = 0;
 		close write_file;	
 
-		################################ open_file,"<test_1
-		open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
-			@input_1 = <open_file>;
-		close open_file;	
+		Read_File_Test_1 ();
 		
 		################################ write_file,">basic
 		open (write_file,">$stockNO\_balance.txt") or die "open file error : $!";			
@@ -312,13 +294,10 @@ sub Get_Balance{
 ################################ sub Get_Income
 sub Get_Income{
 
-	$stock_exist = get_url_data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
+	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 	if ($stock_exist == 1){	
 	
-		################################ open_file,"<test_0
-		open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-			@input_0 = <open_file>;
-		close open_file;	
+		Read_File_Test_0 (); 
 
 		################################ write_file,">test_1
 		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
@@ -349,10 +328,7 @@ sub Get_Income{
 		$yes = 0;
 		close write_file;	
 
-		################################ open_file,"<test_1
-		open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
-			@input_1 = <open_file>;
-		close open_file;	
+		Read_File_Test_1 (); 
 		
 		################################ write_file,">basic
 		open (write_file,">$stockNO\_income.txt") or die "open file error : $!";			
@@ -373,7 +349,7 @@ sub Get_Income{
 };
 
 ################################ sub get_url_data
-sub get_url_data {
+sub Get_Url_Data {
 	my ($url_in, $sleepinterval_in, $yearmonth_in, $stockNO_in) = @_;
 	my ($stock_exist_out);
 	my ($getdoc, $datestring);
@@ -403,6 +379,20 @@ sub get_url_data {
 		print  "There is no ", $stockNO," table @", $locatime, "\n"; 
 	};
 	return $stock_exist_out;
+};
+
+################################ open_file,"<test_0
+sub Read_File_Test_0 {
+	open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
+		@input_0 = <open_file>;
+	close open_file;	
+};
+
+################################ open_file,"<test_1
+sub Read_File_Test_1 {
+	open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
+		@input_1 = <open_file>;
+	close open_file;	
 };
 
 =header
