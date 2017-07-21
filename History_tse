@@ -126,8 +126,8 @@ for (my $year = $yearstart; $year <= $yearend; $year++){
 					@input_2 = <open_file>;
 				close open_file;		
 				
-				if (-e "skill_$stockNO.txt"){					
-					open (open_file,"<skill_$stockNO.txt") or die "open file error : $!";
+				if (-e "$stockNO\_skill.txt"){					
+					open (open_file,"<$stockNO\_skill.txt") or die "open file error : $!";
 						@input_3 = <open_file>;
 					close open_file;				
 					
@@ -143,16 +143,17 @@ for (my $year = $yearstart; $year <= $yearend; $year++){
 
 						if ($haveit == 0){
 							print "Update\t";
-							open (write_file,">>skill_$stockNO.txt") or die "open file error : $!";						
+							open (write_file,">>$stockNO\_skill.txt") or die "open file error : $!";						
 								seek (write_file,0,2);
-								print write_file ($input_2[$i]);
+								printf write_file ("%15s", $input_2[$i]);
 							close write_file;
 						};
 						$haveit = 0;
 					};	
 				}else{	
-					open (write_file,">skill_$stockNO.txt") or die "open file error : $!";					
-						foreach (@input_2) { print write_file"$_"; };
+					print "File is not exist.\n";
+					open (write_file,">$stockNO\_skill.txt") or die "open file error : $!";					
+						foreach (@input_2) { printf write_file"%15s","$_"; };
 					close write_file;					
 				};
 				
