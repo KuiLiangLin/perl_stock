@@ -49,11 +49,11 @@ for (my $k=0; $k<$#stockNum+1; $k++) {
 
 	$url = "http://stock.wearn.com/dividend.asp?kind= $stockNO ";
 	$url =~ s/ //g;	
-#	Get_Dividend();
+	Get_Dividend();
 	
 	$url = "http://stock.wearn.com/financial.asp?kind= $stockNO ";
 	$url =~ s/ //g;	
-#	Get_Financial();	
+	Get_Financial();	
 
 	$url = "http://stock.wearn.com/balance.asp?kind= $stockNO ";
 	$url =~ s/ //g;	
@@ -61,7 +61,7 @@ for (my $k=0; $k<$#stockNum+1; $k++) {
 	
 	$url = "http://stock.wearn.com/income.asp?kind= $stockNO ";
 	$url =~ s/ //g;	
-#	Get_Income();	
+	Get_Income();	
 
 };
 
@@ -231,7 +231,7 @@ sub Get_Financial{
 		################################ write_file,">basic
 		open (write_file,">finicial_tmp_$stockNO.txt") or die "open file error : $!";			
 			for (my $i=0; $i<$#input_1-12; $i+=12) {
-				for (my $a = 0; $a < 11; $a++){
+				for (my $a = 0; $a <= 11; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
 					$input_1[$i+$a] =~ s/ //g;
 					$input_1[$i+$a] =~ s/\t//g;				
@@ -338,6 +338,10 @@ sub Get_Income{
 				$input_0[$i] =~ s/"//g;
 				$input_0[$i] =~ s/&//g;
 				$input_0[$i] =~ s/;//g;
+				$input_0[$i] =~ s/\///g;
+				$input_0[$i] =~ s/\t//g;
+				$input_0[$i] =~ s/_//g;
+				$input_0[$i] =~ s/.$stockNO//g;
 				print write_file $input_0[$i];
 			};
 			};
@@ -351,20 +355,20 @@ sub Get_Income{
 		close open_file;	
 		
 		################################ write_file,">basic
-		open (write_file,">finicial_tmp_$stockNO.txt") or die "open file error : $!";			
-			for (my $i=0; $i<$#input_1-12; $i+=12) {
-				for (my $a = 0; $a < 11; $a++){
+		open (write_file,">income_tmp_$stockNO.txt") or die "open file error : $!";			
+			for (my $i=0; $i<$#input_1-7; $i+=7) {
+				for (my $a = 0; $a <= 6; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
 					$input_1[$i+$a] =~ s/ //g;
 					$input_1[$i+$a] =~ s/\t//g;				
-					printf write_file "%10s", $input_1[$i+$a];
+					printf write_file "%17s", $input_1[$i+$a];
 					print  write_file "\t";
 				};
 				print write_file ("\n" );
 			};
 		close write_file;
-#		system "del test_0_$stockNO.txt";
-#		system "del test_1_$stockNO.txt";		
+		system "del test_0_$stockNO.txt";
+		system "del test_1_$stockNO.txt";		
 	};
 };
 
