@@ -42,71 +42,71 @@ open (open_file,"<stock_number.txt") or die "open file error : $!";
 	@stockNum = <open_file>;
 close open_file;
 
-#for (my $k=0; $k<$#stockNum+1; $k++) {
-#	$stockNO = $stockNum[$k];
-#	$stockNO =~ s/\n//g;
+for (my $k=0; $k<$#stockNum+1; $k++) {
+	$stockNO = $stockNum[$k];
+	$stockNO =~ s/\n//g;
 
 	$url = "http://stock.wearn.com/dividend.asp?kind= $stockNO ";
 	$url =~ s/ //g;	
 	
-	#$stock_exist = get_url_data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
+	$stock_exist = get_url_data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 
-	#if ($stock_exist == 1){	
+	if ($stock_exist == 1){	
 	
-	################################ open_file,"<test_0
-	open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
-		@input_0 = <open_file>;
-	close open_file;	
+		################################ open_file,"<test_0
+		open (open_file,"<test_0_$stockNO.txt") or die "open file error : $!";
+			@input_0 = <open_file>;
+		close open_file;	
 
-	################################ write_file,">test_1
-	open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
-	#foreach (@input) { print "\n $_ ";}
-	$yes = 0;
-	for (my $i=0; $i<$#input_0+1; $i++) {
-		if ($input_0[$i] =~ /<tdalign="center">/) {	
-			$yes = 1; 
-		};	
-	
-		if ($yes == 1){
-		if ($input_0[$i] =~ /&nbsp;/) {	
-			$input_0[$i] =~ s/[a-z]//g;	
-			$input_0[$i] =~ s/<//g;	
-			$input_0[$i] =~ s/>//g;
-			$input_0[$i] =~ s/=//g;
-			$input_0[$i] =~ s/"//g;
-			$input_0[$i] =~ s/&//g;
-			#$input_0[$i] =~ s/\///g;
-			$input_0[$i] =~ s/;//g;
-			print write_file ($input_0[$i], );
-		};
-		};
-	};
-	$yes = 0;
-	close write_file;	
-
-	################################ open_file,"<test_1
-	open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
-		@input_1 = <open_file>;
-	close open_file;	
-	
-	################################ write_file,">basic
-	open (write_file,">basic_tmp_$stockNO.txt") or die "open file error : $!";			
-		for (my $i=0; $i<$#input_1-2; $i+=3) {
-			$input_1[$i] =~ s/\n//g;
-			$input_1[$i+1] =~ s/\n//g;
-			$input_1[$i+2] =~ s/\n//g;
-			$input_1[$i] =~ s/ //g;
-			$input_1[$i+1] =~ s/ //g;
-			$input_1[$i+2] =~ s/ //g;			
-			print write_file ($input_1[$i], "\t" );
-			print write_file ($input_1[$i+1], "\t" );
-			print write_file ($input_1[$i+2], "\n" );
-
-		};
+		################################ write_file,">test_1
+		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
+		#foreach (@input) { print "\n $_ ";}
+		$yes = 0;
+		for (my $i=0; $i<$#input_0+1; $i++) {
+			if ($input_0[$i] =~ /<tdalign="center">/) {	
+				$yes = 1; 
+			};	
 		
-	close write_file;
-	#};
-#};
+			if ($yes == 1){
+			if ($input_0[$i] =~ /&nbsp;/) {	
+				$input_0[$i] =~ s/[a-z]//g;	
+				$input_0[$i] =~ s/<//g;	
+				$input_0[$i] =~ s/>//g;
+				$input_0[$i] =~ s/=//g;
+				$input_0[$i] =~ s/"//g;
+				$input_0[$i] =~ s/&//g;
+				#$input_0[$i] =~ s/\///g;
+				$input_0[$i] =~ s/;//g;
+				print write_file ($input_0[$i], );
+			};
+			};
+		};
+		$yes = 0;
+		close write_file;	
+
+		################################ open_file,"<test_1
+		open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
+			@input_1 = <open_file>;
+		close open_file;	
+		
+		################################ write_file,">basic
+		open (write_file,">dividend_tmp_$stockNO.txt") or die "open file error : $!";			
+			for (my $i=0; $i<$#input_1-2; $i+=3) {
+				$input_1[$i] =~ s/\n//g;
+				$input_1[$i+1] =~ s/\n//g;
+				$input_1[$i+2] =~ s/\n//g;
+				$input_1[$i] =~ s/ //g;
+				$input_1[$i+1] =~ s/ //g;
+				$input_1[$i+2] =~ s/ //g;			
+				print write_file ($input_1[$i], "\t" );
+				print write_file ($input_1[$i+1], "\t" );
+				print write_file ($input_1[$i+2], "\n" );
+			};
+		close write_file;
+		system "del test_0_$stockNO.txt";
+		system "del test_1_$stockNO.txt";		
+	};
+};
 
 	
 
