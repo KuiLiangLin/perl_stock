@@ -64,7 +64,7 @@ for (my $year = $yearstart; $year <= $yearend; $year++){
 			$url = "http://stock.wearn.com/acredit.asp?Year=".
 					" $year_east &month= $month &kind= $stockNO ";
 			$url =~ s/ //g;	
-#			Get_Acredit ();
+			Get_Acredit ();
 
 			$url = "http://stock.wearn.com/zhuli.asp?Year=".
 					" $year_east &month= $month &kind= $stockNO ";
@@ -74,12 +74,12 @@ for (my $year = $yearstart; $year <= $yearend; $year++){
 			$url = "http://stock.wearn.com/foreign.asp?Year=".
 					" $year_east &month= $month &kind= $stockNO ";
 			$url =~ s/ //g;	
-#			Get_Acredit ();			
+			Get_Foreign ();			
 			
 			$url = "http://stock.wearn.com/netbuy.asp?Year=".
 					" $year_east &month= $month &kind= $stockNO ";
 			$url =~ s/ //g;	
-#			Get_Acredit ();			
+			Get_Netbuy ();			
 
 			if ($month < 10) { $month =~ s/0//g; };
 		};
@@ -154,7 +154,7 @@ sub Get_Acredit{
 		Read_File_Test_0 ();
 
 		################################ Write_Into_File_Test_1
-		Write_Into_File_Test_1 ();
+		Write_Into_File_Test_1 ("<tdalign");
 		
 		################################ open_file,"<test_1
 		Read_File_Test_1 ();
@@ -185,7 +185,6 @@ sub Get_Acredit{
 	};
 };
 
-
 ################################ sub Get_Zhuli
 sub Get_Zhuli{
 
@@ -196,7 +195,7 @@ sub Get_Zhuli{
 		Read_File_Test_0 ();
 
 		################################ Write_Into_File_Test_1
-		Write_Into_File_Test_1 ();
+		Write_Into_File_Test_1 ("<tdalign");
 		
 		################################ open_file,"<test_1
 		Read_File_Test_1 ();
@@ -221,14 +220,93 @@ sub Get_Zhuli{
 		################################ Do_Compare_And_Write	
 		Do_Compare_And_Write ("zhuli");
 
-#		system "del test_0_$stockNO.txt";
-#		system "del test_1_$stockNO.txt";	
-#		system "del $stockNO\_tmp_zhuli.txt"
+		system "del test_0_$stockNO.txt";
+		system "del test_1_$stockNO.txt";	
+		system "del $stockNO\_tmp_zhuli.txt"
 	};
 };
 
+################################ sub Get_Foreign
+sub Get_Foreign{
 
+	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
+	if ($stock_exist == 1){	
+		
+		################################ open_file,"<test_0
+		Read_File_Test_0 ();
 
+		################################ Write_Into_File_Test_1
+		Write_Into_File_Test_1 ("<\/td>");
+		
+		################################ open_file,"<test_1
+		Read_File_Test_1 ();
+		
+		################################ write_file,">basic
+		open (write_file,">$stockNO\_tmp_foreign.txt") or die "open file error : $!";			
+			for (my $i=0; $i<$#input_1-4; $i+=4) {
+				for (my $a = 0; $a <= 3; $a++){
+					$input_1[$i+$a] =~ s/\n//g;
+					$input_1[$i+$a] =~ s/ //g;
+					$input_1[$i+$a] =~ s/\t//g;		
+					printf write_file "%15s", $input_1[$i+$a];
+					print  write_file "\t";
+				};
+				print write_file ("\n" );
+			};
+		close write_file;
+		
+		################################ Exchange_Top_Botton_Line
+		Exchange_Top_Botton_Line ("$stockNO\_tmp_foreign.txt");
+
+		################################ Do_Compare_And_Write	
+		Do_Compare_And_Write ("foreign");
+
+		system "del test_0_$stockNO.txt";
+		system "del test_1_$stockNO.txt";	
+		system "del $stockNO\_tmp_foreign.txt"
+	};
+};
+
+################################ sub Get_Netbuy
+sub Get_Netbuy{
+
+	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
+	if ($stock_exist == 1){	
+		
+		################################ open_file,"<test_0
+		Read_File_Test_0 ();
+
+		################################ Write_Into_File_Test_1
+		Write_Into_File_Test_1 ("<tdalign");
+		
+		################################ open_file,"<test_1
+		Read_File_Test_1 ();
+		
+		################################ write_file,">basic
+		open (write_file,">$stockNO\_tmp_netbuy.txt") or die "open file error : $!";			
+			for (my $i=0; $i<$#input_1-4; $i+=4) {
+				for (my $a = 0; $a <= 3; $a++){
+					$input_1[$i+$a] =~ s/\n//g;
+					$input_1[$i+$a] =~ s/ //g;
+					$input_1[$i+$a] =~ s/\t//g;		
+					printf write_file "%15s", $input_1[$i+$a];
+					print  write_file "\t";
+				};
+				print write_file ("\n" );
+			};
+		close write_file;
+		
+		################################ Exchange_Top_Botton_Line
+		Exchange_Top_Botton_Line ("$stockNO\_tmp_netbuy.txt");
+
+		################################ Do_Compare_And_Write	
+		Do_Compare_And_Write ("netbuy");
+
+		system "del test_0_$stockNO.txt";
+		system "del test_1_$stockNO.txt";	
+		system "del $stockNO\_tmp_netbuy.txt"
+	};
+};
 
 
 
@@ -277,6 +355,8 @@ sub Read_File_Test_0 {
 
 ################################ Write_Into_File_Test_1
 sub Write_Into_File_Test_1 {
+	my ($recognize) = @_;
+	
 	open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
 	#foreach (@input) { print "\n $_ ";}
 	$yes = 0;
@@ -286,7 +366,9 @@ sub Write_Into_File_Test_1 {
 		};	
 	
 		if ($yes == 1){
-		if ($input_0[$i] =~ /<\/td>/) {	
+#		if ($input_0[$i] =~ /<\/td>/) {	
+#		if ($input_0[$i] =~ /<tdalign/) {	
+		if ($input_0[$i] =~ /$recognize/) {	
 			$input_0[$i] =~ s/>[0-9]<//g;
 			$input_0[$i] =~ s/[a-z]//g;	
 			$input_0[$i] =~ s/<//g;	
@@ -338,16 +420,19 @@ sub Do_Compare_And_Write {
 		
 			$haveit = 0;
 			for (my $j=0; $j<$#input_3+1; $j++){
+				$input_2[$i] =~ s/ +/\t/g;
+				$input_3[$j] =~ s/ +/\t/g;
+	
 				@all_2 = split('\t' , $input_2[$i]);
 				@all_3 = split('\t' , $input_3[$j]);
-				$all_2[0] =~ s/\n//g;
-				$all_3[0] =~ s/\n//g;
-				$all_2[0] =~ s/\t//g;
-				$all_3[0] =~ s/\t//g;				
-				$all_2[0] =~ s/ //g;
-				$all_3[0] =~ s/ //g;			
+				$all_2[1] =~ s/\n//g;
+				$all_3[1] =~ s/\n//g;
+				$all_2[1] =~ s/\t//g;
+				$all_3[1] =~ s/\t//g;				
+				$all_2[1] =~ s/ //g;
+				$all_3[1] =~ s/ //g;			
 		
-				if($all_2[0] == $all_3[0]) {
+				if($all_2[1] == $all_3[1]) {
 				$haveit = 1; };
 			};
 
