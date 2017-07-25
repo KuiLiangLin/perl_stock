@@ -25,7 +25,7 @@ my $yes;
 ################################
 $stockNO = 2330;
 $yearstart = 2016;	$yearend = 2016;
-$monthstart = 8;	 $monthend = 9;
+$monthstart = 8;	 $monthend = 10;
 $sleepinterval = 1;
 # http://stock.wearn.com/dividend.asp?kind=2330
 # http://stock.wearn.com/financial.asp?kind=2330
@@ -165,7 +165,7 @@ sub Get_Acredit{
 				for (my $a = 0; $a <= 7; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
 					$input_1[$i+$a] =~ s/ //g;
-					$input_1[$i+$a] =~ s/\t//g;				
+					$input_1[$i+$a] =~ s/\t//g;		
 					printf write_file "%15s", $input_1[$i+$a];
 					print  write_file "\t";
 				};
@@ -173,6 +173,8 @@ sub Get_Acredit{
 			};
 		close write_file;
 		
+		
+		Exchange_Top_Botton_Line ("$stockNO\_tmp_acredit.txt");
 		################################ Do_Compare_And_Write	
 		Do_Compare_And_Write ("acredit");
 		
@@ -338,6 +340,8 @@ sub Do_Compare_And_Write {
 		close open_file;				
 		
 		for (my $i=0; $i<$#input_2+1; $i++){
+		
+			$haveit = 0;
 			for (my $j=0; $j<$#input_3+1; $j++){
 				@all_2 = split('\t' , $input_2[$i]);
 				@all_3 = split('\t' , $input_3[$j]);
@@ -347,9 +351,7 @@ sub Do_Compare_And_Write {
 				$all_3[0] =~ s/\t//g;				
 				$all_2[0] =~ s/ //g;
 				$all_3[0] =~ s/ //g;			
-
-				print ($all_2[0]);
-				
+		
 				if($all_2[0] == $all_3[0]) {
 				$haveit = 1; };
 			};
@@ -370,6 +372,20 @@ sub Do_Compare_And_Write {
 	};
 };
 
+sub Exchange_Top_Botton_Line{
+	my ($nnaammee) = @_;
+	my (@tmp_sub);
+	
+	open (open_file,"<$nnaammee") or die "open file error : $!";
+		@tmp_sub = <open_file>;
+	close open_file;	
+	
+	open (write_file,">$nnaammee") or die "open file error : $!";
+		for (my $i = $#tmp_sub; $i >= 0; $i--){
+			print write_file ($tmp_sub[$i]); 
+		};
+	close write_file;
+};
 
 
 =header
