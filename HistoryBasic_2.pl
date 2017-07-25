@@ -173,20 +173,15 @@ sub Get_Acredit{
 			};
 		close write_file;
 		
-		
+		################################ Exchange_Top_Botton_Line
 		Exchange_Top_Botton_Line ("$stockNO\_tmp_acredit.txt");
+
 		################################ Do_Compare_And_Write	
 		Do_Compare_And_Write ("acredit");
-		
-		
-		
-		
-		
-		
-		
-#		system "del test_0_$stockNO.txt";
-#		system "del test_1_$stockNO.txt";	
-#		system "del $stockNO\_tmp_acredit.txt"
+
+		system "del test_0_$stockNO.txt";
+		system "del test_1_$stockNO.txt";	
+		system "del $stockNO\_tmp_acredit.txt"
 	};
 };
 
