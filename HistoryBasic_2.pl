@@ -64,12 +64,12 @@ for (my $year = $yearstart; $year <= $yearend; $year++){
 			$url = "http://stock.wearn.com/acredit.asp?Year=".
 					" $year_east &month= $month &kind= $stockNO ";
 			$url =~ s/ //g;	
-			Get_Acredit ();
+#			Get_Acredit ();
 
 			$url = "http://stock.wearn.com/zhuli.asp?Year=".
 					" $year_east &month= $month &kind= $stockNO ";
 			$url =~ s/ //g;	
-#			Get_Acredit ();			
+			Get_Zhuli ();			
 			
 			$url = "http://stock.wearn.com/foreign.asp?Year=".
 					" $year_east &month= $month &kind= $stockNO ";
@@ -186,46 +186,46 @@ sub Get_Acredit{
 };
 
 
-
-
-
-
-
-
-################################ sub Get_Income
-sub Get_Income{
+################################ sub Get_Zhuli
+sub Get_Zhuli{
 
 	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 	if ($stock_exist == 1){	
-	
+		
 		################################ open_file,"<test_0
-		Read_File_Test_0 (); 
+		Read_File_Test_0 ();
 
 		################################ Write_Into_File_Test_1
 		Write_Into_File_Test_1 ();
 		
 		################################ open_file,"<test_1
-		Read_File_Test_1 (); 
+		Read_File_Test_1 ();
 		
 		################################ write_file,">basic
-		open (write_file,">$stockNO\_income.txt") or die "open file error : $!";			
-			for (my $i=0; $i<$#input_1-7; $i+=7) {
-				for (my $a = 0; $a <= 6; $a++){
+		open (write_file,">$stockNO\_tmp_zhuli.txt") or die "open file error : $!";			
+			for (my $i=0; $i<$#input_1-3; $i+=3) {
+				for (my $a = 0; $a <= 2; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
 					$input_1[$i+$a] =~ s/ //g;
-					$input_1[$i+$a] =~ s/\t//g;				
-					printf write_file "%17s", $input_1[$i+$a];
+					$input_1[$i+$a] =~ s/\t//g;		
+					printf write_file "%15s", $input_1[$i+$a];
 					print  write_file "\t";
 				};
 				print write_file ("\n" );
 			};
 		close write_file;
-		system "del test_0_$stockNO.txt";
-		system "del test_1_$stockNO.txt";		
+		
+		################################ Exchange_Top_Botton_Line
+		Exchange_Top_Botton_Line ("$stockNO\_tmp_zhuli.txt");
+
+		################################ Do_Compare_And_Write	
+		Do_Compare_And_Write ("zhuli");
+
+#		system "del test_0_$stockNO.txt";
+#		system "del test_1_$stockNO.txt";	
+#		system "del $stockNO\_tmp_zhuli.txt"
 	};
 };
-
-
 
 
 
