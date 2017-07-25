@@ -24,14 +24,16 @@ my $haveit;
 my $yes;
 ################################
 $stockNO = 2330;
-$yearstart = 2006;	$yearend = 2006;
-$monthstart = 2;	 $monthend = 3;
+$yearstart = 2016;	$yearend = 2016;
+$monthstart = 8;	 $monthend = 9;
 $sleepinterval = 1;
 # http://stock.wearn.com/dividend.asp?kind=2330
 # http://stock.wearn.com/financial.asp?kind=2330
 # http://stock.wearn.com/balance.asp?kind=2330
 # http://stock.wearn.com/income.asp?kind=2330
+
 # http://stock.wearn.com/asale.asp?Year=106&kind=2330
+
 # http://stock.wearn.com/acredit.asp?Year=106&month=07&kind=2330
 # http://stock.wearn.com/zhuli.asp?Year=105&month=07&kind=2330
 # http://stock.wearn.com/foreign.asp?Year=105&month=07&kind=2330
@@ -43,26 +45,45 @@ open (open_file,"<stock_number.txt") or die "open file error : $!";
 close open_file;
 
 ################################ Main
-for (my $k=0; $k<$#stockNum+1; $k++) {
-	$stockNO = $stockNum[$k];
-	$stockNO =~ s/\n//g;
+for (my $year = $yearstart; $year <= $yearend; $year++){
+	for (my $month = $monthstart; $month <= $monthend; $month++){
+		for (my $k=0; $k<$#stockNum+1; $k++) {
+			$stockNO = $stockNum[$k];
+			$stockNO =~ s/\n//g;
 
-	$url = "http://stock.wearn.com/dividend.asp?kind= $stockNO ";
-	$url =~ s/ //g;	
-	Get_Dividend();
-	
-	$url = "http://stock.wearn.com/financial.asp?kind= $stockNO ";
-	$url =~ s/ //g;	
-	Get_Financial();	
+			$year_east = $year - 1911;
+			if ($month>=10){
+				$yearmonth = "$year $month 01";
+				$yearmonth =~ s/ //g;
+			}else{
+				$yearmonth = "$year 0 $month 01";
+				$yearmonth =~ s/ //g;
+				$month = "0$month";
+			}
+			
+			$url = "http://stock.wearn.com/acredit.asp?Year=".
+					" $year_east &month= $month &kind= $stockNO ";
+			$url =~ s/ //g;	
+			Get_Acredit ();
 
-	$url = "http://stock.wearn.com/balance.asp?kind= $stockNO ";
-	$url =~ s/ //g;	
-	Get_Balance();		
-	
-	$url = "http://stock.wearn.com/income.asp?kind= $stockNO ";
-	$url =~ s/ //g;	
-	Get_Income();	
+			$url = "http://stock.wearn.com/zhuli.asp?Year=".
+					" $year_east &month= $month &kind= $stockNO ";
+			$url =~ s/ //g;	
+#			Get_Acredit ();			
+			
+			$url = "http://stock.wearn.com/foreign.asp?Year=".
+					" $year_east &month= $month &kind= $stockNO ";
+			$url =~ s/ //g;	
+#			Get_Acredit ();			
+			
+			$url = "http://stock.wearn.com/netbuy.asp?Year=".
+					" $year_east &month= $month &kind= $stockNO ";
+			$url =~ s/ //g;	
+#			Get_Acredit ();			
 
+			if ($month < 10) { $month =~ s/0//g; };
+		};
+	};
 };
 
 ################################ Finish
@@ -123,160 +144,25 @@ open (write_file,">>test_0_$stockNO_in.txt") or die "open file error : $!";
 close write_file;
 =cut
 
-################################ sub Get_Dividend
-sub Get_Dividend{
+################################ sub Get_Acredit
+sub Get_Acredit{
 
 	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 	if ($stock_exist == 1){	
-	
-		Read_File_Test_0 ();	
-
-		################################ write_file,">test_1
-		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
-		#foreach (@input) { print "\n $_ ";}
-		$yes = 0;
-		for (my $i=0; $i<$#input_0+1; $i++) {
-			if ($input_0[$i] =~ /<tdalign="center">/) {	
-				$yes = 1; 
-			};	
 		
-			if ($yes == 1){
-			if ($input_0[$i] =~ /&nbsp;/) {	
-				$input_0[$i] =~ s/[a-z]//g;	
-				$input_0[$i] =~ s/<//g;	
-				$input_0[$i] =~ s/>//g;
-				$input_0[$i] =~ s/=//g;
-				$input_0[$i] =~ s/"//g;
-				$input_0[$i] =~ s/&//g;
-				#$input_0[$i] =~ s/\///g;
-				$input_0[$i] =~ s/;//g;
-				print write_file ($input_0[$i], );
-			};
-			};
-		};
-		$yes = 0;
-		close write_file;	
-
-		Read_File_Test_1 ();	
-		
-		################################ write_file,">basic
-		open (write_file,">$stockNO\_dividend.txt") or die "open file error : $!";			
-			for (my $i=0; $i<$#input_1-2; $i+=3) {
-				$input_1[$i] =~ s/\n//g;
-				$input_1[$i+1] =~ s/\n//g;
-				$input_1[$i+2] =~ s/\n//g;
-				$input_1[$i] =~ s/ //g;
-				$input_1[$i+1] =~ s/ //g;
-				$input_1[$i+2] =~ s/ //g;		
-				printf write_file ("%10s",$input_1[$i]);
-				print  write_file ("\t");
-				printf write_file ("%10s",$input_1[$i+1]);				
-				print  write_file ("\t");
-				printf write_file ("%10s",$input_1[$i+2]);				
-				print  write_file ("\n");
-			};
-		close write_file;
-		system "del test_0_$stockNO.txt";
-		system "del test_1_$stockNO.txt";		
-	};
-};
-
-################################ sub Get_Financial
-sub Get_Financial{
-
-	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
-	if ($stock_exist == 1){	
-	
-		Read_File_Test_0 ();	
-
-		################################ write_file,">test_1
-		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
-		#foreach (@input) { print "\n $_ ";}
-		$yes = 0;
-		for (my $i=0; $i<$#input_0+1; $i++) {
-			if ($input_0[$i] =~ /<tdalign="center">/) {	
-				$yes = 1; 
-			};	
-		
-			if ($yes == 1){
-			if ($input_0[$i] =~ /<\/td>/) {	
-				$input_0[$i] =~ s/[a-z]//g;	
-				$input_0[$i] =~ s/<//g;	
-				$input_0[$i] =~ s/>//g;
-				$input_0[$i] =~ s/=//g;
-				$input_0[$i] =~ s/"//g;
-				$input_0[$i] =~ s/&//g;
-				$input_0[$i] =~ s/;//g;
-				print write_file $input_0[$i];
-			};
-			};
-		};
-		$yes = 0;
-		close write_file;	
-
-		Read_File_Test_1 ();	
-		
-		################################ write_file,">basic
-		open (write_file,">$stockNO\_finicial.txt") or die "open file error : $!";			
-			for (my $i=0; $i<$#input_1-12; $i+=12) {
-				for (my $a = 0; $a <= 11; $a++){
-					$input_1[$i+$a] =~ s/\n//g;
-					$input_1[$i+$a] =~ s/ //g;
-					$input_1[$i+$a] =~ s/\t//g;				
-					printf write_file "%10s", $input_1[$i+$a];
-					print  write_file "\t";
-				};
-				print write_file ("\n" );
-			};
-		close write_file;
-		system "del test_0_$stockNO.txt";
-		system "del test_1_$stockNO.txt";		
-	};
-};
-
-################################ sub Get_Balance
-sub Get_Balance{
-
-	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
-	if ($stock_exist == 1){	
-	
+		################################ open_file,"<test_0
 		Read_File_Test_0 ();
 
-		################################ write_file,">test_1
-		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
-		#foreach (@input) { print "\n $_ ";}
-		$yes = 0;
-		for (my $i=0; $i<$#input_0+1; $i++) {
-			if ($input_0[$i] =~ /<tdalign="center">/) {	
-				$yes = 1; 
-			};	
+		################################ Write_Into_File_Test_1
+		Write_Into_File_Test_1 ();
 		
-			if ($yes == 1){
-			if ($input_0[$i] =~ /<\/td>/) {	
-				$input_0[$i] =~ s/[a-z]//g;	
-				$input_0[$i] =~ s/<//g;	
-				$input_0[$i] =~ s/>//g;
-				$input_0[$i] =~ s/=//g;
-				$input_0[$i] =~ s/"//g;
-				$input_0[$i] =~ s/&//g;
-				$input_0[$i] =~ s/;//g;
-				$input_0[$i] =~ s/\///g;
-				$input_0[$i] =~ s/\t//g;
-				$input_0[$i] =~ s/_//g;
-				$input_0[$i] =~ s/.$stockNO//g;
-				print write_file $input_0[$i];
-			};
-			};
-		};
-		$yes = 0;
-		close write_file;	
-
+		################################ open_file,"<test_1
 		Read_File_Test_1 ();
 		
 		################################ write_file,">basic
-		open (write_file,">$stockNO\_balance.txt") or die "open file error : $!";			
-			for (my $i=0; $i<$#input_1-7; $i+=7) {
-				for (my $a = 0; $a <= 6; $a++){
+		open (write_file,">$stockNO\_tmp_acredit.txt") or die "open file error : $!";			
+			for (my $i=0; $i<$#input_1-8; $i+=8) {
+				for (my $a = 0; $a <= 7; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
 					$input_1[$i+$a] =~ s/ //g;
 					$input_1[$i+$a] =~ s/\t//g;				
@@ -286,10 +172,28 @@ sub Get_Balance{
 				print write_file ("\n" );
 			};
 		close write_file;
-		system "del test_0_$stockNO.txt";
-		system "del test_1_$stockNO.txt";		
+		
+		################################ Do_Compare_And_Write	
+		Do_Compare_And_Write ("acredit");
+		
+		
+		
+		
+		
+		
+		
+#		system "del test_0_$stockNO.txt";
+#		system "del test_1_$stockNO.txt";	
+#		system "del $stockNO\_tmp_acredit.txt"
 	};
 };
+
+
+
+
+
+
+
 
 ################################ sub Get_Income
 sub Get_Income{
@@ -297,37 +201,13 @@ sub Get_Income{
 	$stock_exist = Get_Url_Data ($url, $sleepinterval, $stockNO, $stockNO); #submodule	
 	if ($stock_exist == 1){	
 	
+		################################ open_file,"<test_0
 		Read_File_Test_0 (); 
 
-		################################ write_file,">test_1
-		open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
-		#foreach (@input) { print "\n $_ ";}
-		$yes = 0;
-		for (my $i=0; $i<$#input_0+1; $i++) {
-			if ($input_0[$i] =~ /<tdalign="center">/) {	
-				$yes = 1; 
-			};	
+		################################ Write_Into_File_Test_1
+		Write_Into_File_Test_1 ();
 		
-			if ($yes == 1){
-			if ($input_0[$i] =~ /<\/td>/) {	
-				$input_0[$i] =~ s/[a-z]//g;	
-				$input_0[$i] =~ s/<//g;	
-				$input_0[$i] =~ s/>//g;
-				$input_0[$i] =~ s/=//g;
-				$input_0[$i] =~ s/"//g;
-				$input_0[$i] =~ s/&//g;
-				$input_0[$i] =~ s/;//g;
-				$input_0[$i] =~ s/\///g;
-				$input_0[$i] =~ s/\t//g;
-				$input_0[$i] =~ s/_//g;
-				$input_0[$i] =~ s/.$stockNO//g;
-				print write_file $input_0[$i];
-			};
-			};
-		};
-		$yes = 0;
-		close write_file;	
-
+		################################ open_file,"<test_1
 		Read_File_Test_1 (); 
 		
 		################################ write_file,">basic
@@ -347,6 +227,16 @@ sub Get_Income{
 		system "del test_1_$stockNO.txt";		
 	};
 };
+
+
+
+
+
+
+
+
+
+
 
 ################################ sub get_url_data
 sub Get_Url_Data {
@@ -388,12 +278,99 @@ sub Read_File_Test_0 {
 	close open_file;	
 };
 
+################################ Write_Into_File_Test_1
+sub Write_Into_File_Test_1 {
+	open (write_file,">test_1_$stockNO.txt") or die "open file error : $!";
+	#foreach (@input) { print "\n $_ ";}
+	$yes = 0;
+	for (my $i=0; $i<$#input_0+1; $i++) {
+		if ($input_0[$i] =~ /<tdalign="center">/) {	
+			$yes = 1; 
+		};	
+	
+		if ($yes == 1){
+		if ($input_0[$i] =~ /<\/td>/) {	
+			$input_0[$i] =~ s/>[0-9]<//g;
+			$input_0[$i] =~ s/[a-z]//g;	
+			$input_0[$i] =~ s/<//g;	
+			$input_0[$i] =~ s/>//g;
+			$input_0[$i] =~ s/=//g;
+			$input_0[$i] =~ s/"//g;
+			$input_0[$i] =~ s/&//g;
+			$input_0[$i] =~ s/;//g;
+			$input_0[$i] =~ s/\///g;
+			$input_0[$i] =~ s/\t//g;
+			$input_0[$i] =~ s/_//g;
+			$input_0[$i] =~ s/://g;
+			$input_0[$i] =~ s/.$stockNO//g;
+			print write_file $input_0[$i];
+		};
+		};
+	};
+	$yes = 0;
+	close write_file;	
+};
+
 ################################ open_file,"<test_1
 sub Read_File_Test_1 {
 	open (open_file,"<test_1_$stockNO.txt") or die "open file error : $!";
 		@input_1 = <open_file>;
 	close open_file;	
 };
+
+################################ stock_exist == 0
+sub Stock_Doesnt_Exist {
+	my $locatime = localtime();
+	print  "There is no ", $stockNO," table @", $locatime, "\n"; 
+};
+
+################################ Do_Compare_And_Write
+sub Do_Compare_And_Write {
+	my ($nnaammee) = @_;
+	
+	open (open_file,"<$stockNO\_tmp_$nnaammee\.txt") or die "open file error : $!";
+		@input_2 = <open_file>;
+	close open_file;
+	
+	if (-e "$stockNO\_$nnaammee\.txt"){					
+		open (open_file,"<$stockNO\_$nnaammee\.txt") or die "open file error : $!";
+			@input_3 = <open_file>;
+		close open_file;				
+		
+		for (my $i=0; $i<$#input_2+1; $i++){
+			for (my $j=0; $j<$#input_3+1; $j++){
+				@all_2 = split('\t' , $input_2[$i]);
+				@all_3 = split('\t' , $input_3[$j]);
+				$all_2[0] =~ s/\n//g;
+				$all_3[0] =~ s/\n//g;
+				$all_2[0] =~ s/\t//g;
+				$all_3[0] =~ s/\t//g;				
+				$all_2[0] =~ s/ //g;
+				$all_3[0] =~ s/ //g;			
+
+				print ($all_2[0]);
+				
+				if($all_2[0] == $all_3[0]) {
+				$haveit = 1; };
+			};
+
+			if ($haveit == 0){
+				print "Update\t";
+				open (write_file,">>$stockNO\_$nnaammee\.txt") or die "open file error : $!";						
+					seek (write_file,0,2);
+					print write_file ($input_2[$i]);
+				close write_file;
+			};
+			$haveit = 0;
+		};	
+	}else{	
+		open (write_file,">$stockNO\_$nnaammee\.txt") or die "open file error : $!";					
+			foreach (@input_2) { print write_file"$_"; };
+		close write_file;					
+	};
+};
+
+
 
 =header
  Code  Issues 0  Pull requests 0  Projects 0  Wiki  Settings Insights 
