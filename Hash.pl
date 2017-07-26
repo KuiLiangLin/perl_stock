@@ -122,7 +122,7 @@ print $four[2331][0][2][1],"\n";
 print "\n";
 print $four[2332][0][0][0],"\n";
 
-print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
+print "\n\n ~~~~ Hash => All works have been done! ~~~~ \n\n";
 
 ################################
 =header
