@@ -24,8 +24,10 @@ my $haveit;
 my $yes;
 ################################
 $stockNO = 2330;
-$yearstart = 2006;	$yearend = 2006;
-$monthstart = 2;	 $monthend = 3;
+$yearstart = $ARGV[0];	$yearend = $ARGV[1];
+$monthstart = $ARGV[2];	 $monthend = $ARGV[3];
+#$yearstart = 2016;	$yearend = 2016;
+#$monthstart = 8;	 $monthend = 10;
 $sleepinterval = 1;
 # http://stock.wearn.com/dividend.asp?kind=2330
 # http://stock.wearn.com/financial.asp?kind=2330
@@ -66,7 +68,7 @@ for (my $k=0; $k<$#stockNum+1; $k++) {
 };
 
 ################################ Finish
-print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
+print "\n\n ~~~~ HistoryBasic => All works have been done! ~~~~ \n\n";
 
 =header	
 	################################ write_file,">skill
