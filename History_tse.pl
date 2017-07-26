@@ -24,8 +24,10 @@ my $haveit;
 
 ################################
 $stockNO = 2330;
-$yearstart = 2006;	$yearend = 2006;
-$monthstart = 2;	 $monthend = 3;
+$yearstart = $ARGV[0];	$yearend = $ARGV[1];
+$monthstart = $ARGV[2];	 $monthend = $ARGV[3];
+#$yearstart = 2016;	$yearend = 2016;
+#$monthstart = 8;	 $monthend = 10;
 $sleepinterval = 1;
 
 ################################ open_file,"<test_0
@@ -171,7 +173,7 @@ for (my $year = $yearstart; $year <= $yearend; $year++){
 	
 
 ################################
-print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
+print "\n\n ~~~~ History_tse => All works have been done! ~~~~ \n\n";
 
 =header	
 	################################ write_file,">skill
