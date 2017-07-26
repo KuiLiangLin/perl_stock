@@ -14,7 +14,7 @@ my $sleepinterval;
 my $stock_exist;
 my $year_east;
 ################################
-$stockNOstart = 0050;	$stockNOend = 9999;
+$stockNOstart = 0000;	$stockNOend = 9999;
 $year = 2017;
 $month = 7;	 
 $sleepinterval = 1;
@@ -69,7 +69,7 @@ open (write_file,">stock_number.txt") or die "open file error : $!";
 close write_file;
 
 ################################
-print "\n\n ~~~~ All works have been done! ~~~~ \n\n";
+print "\n\n ~~~~ GetStockNumber => All works have been done! ~~~~ \n\n";
 
 =header 
 Branch: master Find file Copy pathperl_stock/History
@@ -109,5 +109,3 @@ sub get_url_data {
 	};
 	return $stock_exist_out;
 };
-
-
