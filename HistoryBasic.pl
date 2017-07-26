@@ -281,7 +281,8 @@ sub Get_Balance{
 				for (my $a = 0; $a <= 6; $a++){
 					$input_1[$i+$a] =~ s/\n//g;
 					$input_1[$i+$a] =~ s/ //g;
-					$input_1[$i+$a] =~ s/\t//g;				
+					$input_1[$i+$a] =~ s/\t//g;
+					$input_1[$i+$a] =~ s/\///g;
 					printf write_file "%15s", $input_1[$i+$a];
 					print  write_file "\t";
 				};
