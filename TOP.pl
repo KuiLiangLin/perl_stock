@@ -19,12 +19,6 @@ year : dividend finicial
 system "perl History_tse.pl 2016 2016 2 2"; 
 
 ################################ 
-##### year : dividend finicial 
-##### season : balance income
-################################ 
-system "perl HistoryBasic.pl";
-
-################################ 
 ##### daily : acredit foreign netbuy zhuli
 ################################ 
 system "perl HistoryBasic_2.pl 2016 2016 2 2"; 
@@ -34,6 +28,11 @@ system "perl HistoryBasic_2.pl 2016 2016 2 2";
 ################################ 
 system "perl HistoryBasic_3.pl 2016 2016"; 
 
+################################ 
+##### year : dividend finicial 
+##### season : balance income
+################################ 
+system "perl HistoryBasic.pl";
 
 #system "perl Hash.pl";
 
