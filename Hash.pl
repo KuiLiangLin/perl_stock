@@ -110,7 +110,7 @@ sub Three_Linked {
 		#if ($input[0] =~ /$stockNO/){
 		#foreach (@input) { print "\n $_ ";}
 		@two = 0;
-		for (my $i=0; $i<$#input+1; $i++) {
+		for (my $i=0; $i<=$#input; $i++) {
 			#$input[$i] =~ s/,//g;
 			$input[$i] =~ s/\t/ /g;
 			$input[$i] =~ s/ +/\t/g;
@@ -127,7 +127,7 @@ sub Three_Linked {
 			@two[$i] = ([   $split[0], $split[1], $split[2], 
 							$split[3], $split[4], $split[5], 
 							$split[6], $split[7], $split[8],
-							$split[9]	]);
+							$split[9], $#split	, $#input   ]);
 			
 		};
 		@three[$number_in] = ([@two]);
