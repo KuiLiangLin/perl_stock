@@ -38,6 +38,8 @@ open (open_file,"<stock_number.txt") or die "open file error : $!";
 	@stockNum = <open_file>;
 close open_file;
 
+
+
 ################################ main
 for (my $k=0; $k<$#stockNum+1; $k++) {
 	$stockNO = $stockNum[$k];
@@ -57,19 +59,30 @@ for (my $k=0; $k<$#stockNum+1; $k++) {
 	Three_Linked ( $stockNO, "dividend", 8 );
 	Three_Linked ( $stockNO, "finicial", 9 );
 	
-	@four[$stockNO] = ([@three]);
+	if (-e "$stockNO\_skill.txt"){
+		@four[$stockNO] = ([@three]);
+		Chop_First_Column ( $stockNO, 1);
+		Chop_First_Column ( $stockNO, 2);
+		Chop_First_Column ( $stockNO, 3);
+		Chop_First_Column ( $stockNO, 4);
+		Chop_First_Column ( $stockNO, 5);
+		Chop_First_Column ( $stockNO, 6);
+		Chop_First_Column ( $stockNO, 7);
+		Chop_First_Column ( $stockNO, 8);
+		Chop_First_Column ( $stockNO, 9);
+	};
 	
-	
+
 };
 
 
 
 ### $four [stock_number] [skill/basic/volum][date] [data] ###
 print $four[2331][7][1][9],"\n";
-print $four[2331][8][4][3],"\n";
+print $four[2331][5][0][0],"\n";
 print $four[2331][2][1][3],"\n";
 print $four[2331][0][2][4],"\n";
-print $four[2331][1][0][5],"\n";
+print $four[0000][5][0][3],"\n";
 #print "\n";
 #print $four[2332][0][0][0],"\n";
 
@@ -106,7 +119,7 @@ sub Three_Linked {
 		open (open_file, "<$stockNO_in\_$nnaammee_in\.txt") or die "open file error : $!";
 			@input = <open_file>;
 		close open_file;
-		
+	
 		#if ($input[0] =~ /$stockNO/){
 		#foreach (@input) { print "\n $_ ";}
 		@two = 0;
@@ -120,14 +133,15 @@ sub Three_Linked {
 				$split[$j] =~ s/\n//g;
 			};
 			
-			for (my $j=$#split+1; $j<=9; $j++) {
+			for (my $j=$#split+1; $j<=11; $j++) {
 				$split[$j] = 0;
 			};
 			
 			@two[$i] = ([   $split[0], $split[1], $split[2], 
 							$split[3], $split[4], $split[5], 
 							$split[6], $split[7], $split[8],
-							$split[9], $#split	, $#input   ]);
+							$split[9], $split[10], $split[11],
+							$#input	 , $#split    ]);
 			
 		};
 		@three[$number_in] = ([@two]);
@@ -146,13 +160,24 @@ sub Chop_New_Line {
 		};
 	};
 };
-
+=cut
 
 sub Chop_First_Column{
+	my ($stockNO_in, $number_in) = @_;
 
+#	for (my $j=0; $j<= $four[$stockNO_in][$number_in][0][12]; $j++) {
+	for (my $j=0; $j<= 0; $j++) {
+		for (my $k=0; $k<= $four[$stockNO_in][$number_in][0][13]+1; $k++) {
+			$four[$stockNO_in][$number_in][$j][$k] = $four[$stockNO_in][$number_in][$j][$k+1];
+#			print $k,$stockNO_in,"\n" ;
+#			print $four[$stockNO_in][$number_in][$j][$k],"\n";
+#			print $four[$stockNO_in][$number_in][$j][$k+1],"\n";
+		};
+		$four[$stockNO_in][$number_in][$j][13] = $four[$stockNO_in][$number_in][$j][13]-1;
+	};
 
 };
-=cut
+
 
 
 
