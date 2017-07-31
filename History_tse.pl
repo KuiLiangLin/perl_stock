@@ -12,6 +12,7 @@ my @input_0;
 my @input_1;
 my @input_2;
 my @input_3;
+my @input_4;
 my @all;
 my @all_2;
 my @all_3;
@@ -158,7 +159,18 @@ for (my $year = $yearstart; $year <= $yearend; $year++){
 						foreach (@input_2) { printf write_file"%15s","$_"; };
 					close write_file;					
 				};
-				
+			
+
+			open (open_file,"<$stockNO\_skill.txt") or die "open file error : $!";
+				@input_4 = <open_file>;
+			close open_file;
+			open (write_file,">$stockNO\_skill.txt") or die "open file error : $!";					
+				foreach (@input_4) { 
+					$_ =~ 	s/\///g; 
+					print write_file $_;
+				};
+			close write_file;		
+			
 			system "del test_0_$stockNO.txt";
 			system "del test_1_$stockNO.txt";
 			system "del skill_tmp_$stockNO.txt";
