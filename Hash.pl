@@ -58,7 +58,7 @@ for (my $k=0; $k<$#stockNum+1; $k++) {
 	Three_Linked ( $stockNO, "income", 7 );
 	Three_Linked ( $stockNO, "dividend", 8 );
 	Three_Linked ( $stockNO, "finicial", 9 );
-	
+
 	if (-e "$stockNO\_skill.txt"){
 		@four[$stockNO] = ([@three]);
 		Chop_First_Column ( $stockNO, 1);
@@ -71,7 +71,7 @@ for (my $k=0; $k<$#stockNum+1; $k++) {
 		Chop_First_Column ( $stockNO, 8);
 		Chop_First_Column ( $stockNO, 9);
 	};
-	
+
 
 };
 
@@ -133,7 +133,7 @@ sub Three_Linked {
 				$split[$j] =~ s/\n//g;
 			};
 			
-			for (my $j=$#split+1; $j<=11; $j++) {
+			for (my $j=$#split+1; $j<=14; $j++) {
 				$split[$j] = 0;
 			};
 			
@@ -141,6 +141,7 @@ sub Three_Linked {
 							$split[3], $split[4], $split[5], 
 							$split[6], $split[7], $split[8],
 							$split[9], $split[10], $split[11],
+							$split[12], $split[13], $split[14],
 							$#input	 , $#split    ]);
 			
 		};
@@ -167,13 +168,13 @@ sub Chop_First_Column{
 
 #	for (my $j=0; $j<= $four[$stockNO_in][$number_in][0][12]; $j++) {
 	for (my $j=0; $j<= 0; $j++) {
-		for (my $k=0; $k<= $four[$stockNO_in][$number_in][0][13]+1; $k++) {
+		for (my $k=0; $k<= $four[$stockNO_in][$number_in][0][16]+1; $k++) {
 			$four[$stockNO_in][$number_in][$j][$k] = $four[$stockNO_in][$number_in][$j][$k+1];
 #			print $k,$stockNO_in,"\n" ;
 #			print $four[$stockNO_in][$number_in][$j][$k],"\n";
 #			print $four[$stockNO_in][$number_in][$j][$k+1],"\n";
 		};
-		$four[$stockNO_in][$number_in][$j][13] = $four[$stockNO_in][$number_in][$j][13]-1;
+		$four[$stockNO_in][$number_in][$j][16] = $four[$stockNO_in][$number_in][$j][13]-1;
 	};
 
 };
