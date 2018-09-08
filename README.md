@@ -1,8 +1,10 @@
-# perl_stock
-perl_stock
-
+<h1 id="perl stock" > perl stock:</h1>
+<hr>
 Last edit : 2017/07/25
 
 Function of fetching stock data and calculating.
 
-Source code from https://github.com/b9907020/perl_stock
+<hr>
+<p> END </p>
+<p> Codes are <em><a href="https://github.com/KuiLiangLin/verilog_iverilog_sample/">Here</a></em>. </p>
+<p> You can return <em><a href="https://kuilianglin.github.io/Welcome/">My Main Page</a></em>. </P>
